@@ -4,6 +4,7 @@
 
 	<head>
 		<link rel="stylesheet" type="text/css" href="CSS/books.css">
+		<link rel="stylesheet" type="text/css" href="CSS/Customized_w3_stylesheet.css">
 		<title>My Book App</title>
 	</head>
 	
@@ -11,34 +12,37 @@
 	
 		<div id="main">
 		
-			<div id="titleDiv">
-				<h1>Books</h1>
+			<div id="titleDiv" class="w3-container w3-center">
+				<h1 class="myTitle w3-text-deep-orange">My library</h1>
 			</div>
 
-			<div id="inputDiv">
-	 			<h3>Add a book to the list:</h3>
-				<input type="text" id="titleEntry" placeholder="Title">
+			<div id="inputDiv" class="w3-container w3-border w3-round-large addMargin w3-border-indigo">
+	 			<h3 class="mySubTitle w3-text-indigo">Add a book to the list:</h3>
+				<input type="text" id="titleEntry" placeholder="Title" class="w3-input" required="required">
 				<br/><br/>
-				<input type="text" id="authorEntry" placeholder="Author">
+				<input type="text" id="authorEntry" placeholder="Author" class="w3-input" required="required">
 				<br/><br/>
-				<input type="text" id="isbnEntry" placeholder="ISBN">
+				<input type="text" id="isbnEntry" placeholder="ISBN" class="w3-input" required="required">
 				<br/><br/>
-				<button id="addButton" type="button" onclick="addBook()">Add</button>
+				<button id="addButton" type="button" onclick="addBook()" class="w3-button w3-indigo w3-round-large">Add</button>
+				<br/><br/>
 			</div>
 			
-			<div id="displayDiv">
+			<div id="displayDiv" class="w3-container w3-border w3-round-large addMargin w3-border-indigo">
 				<!-- <h3>Search a book from the list:</h3> -->
 				<!-- <input type="text" id="searchEntry" onkeyup="searchBook()" placeholder="Which book are you looking for?"> -->
 
-				<h3>Book list:</h3>
+				<h3 class="mySubTitle w3-text-indigo">Book list:</h3>
 				
-				<table id="myTable" border="1">
+				<table id="myTable" border="1" class="w3-table w3-striped w3-centered">
 					<tr>
-						<th>Titre</th>
-						<th>Auteur</th>
+						<th>Title</th>
+						<th>Author</th>
 						<th>ISBN</th>
+						<th>Delete</th>
 					</tr>
 				</table>
+				<br/>
 				
 				<!-- <button id="clearButton" type="button" onclick="removeEveryBook()">Empty list</button> -->
 			</div>
