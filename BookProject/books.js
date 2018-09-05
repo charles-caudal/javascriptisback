@@ -25,7 +25,9 @@
 	    if (this.readyState == 4 && this.status == 200) {
 	    	var parsedResponse = JSON.parse(this.responseText);
 
-	    	localStorage.setItem("apiBooks",  JSON.stringify(parsedResponse));
+	    	if (localStorage.getItem("apiBooks").length === 0) {
+	    		localStorage.setItem("apiBooks",  JSON.stringify(parsedResponse));
+	    	}
 
 	    	displayTable();
 	    }
@@ -61,23 +63,25 @@ function addBook() {
 	displayTable();
 }
 
-function displayTable(arrayOfObjects) {
+function displayTable() {
 	// Get the parent table
 	var table = document.getElementById("myTable");
 
 	// Delete the existing table content
-	table.innerHTML = '<tr><th>Titre</th><th>Auteur</th><th>ISBN</th></tr>'
+	table.innerHTML = '<tr><th>Titre</th><th>Auteur</th><th>ISBN</th><th>Delete</th></tr>'
 
 	// Get API books from local storage
-	var allApiBooks = JSON.parse(localStorage.getItem('apiBooks'));
-	buildTableLine(table, allApiBooks);
+	// var allApiBooks = JSON.parse(localStorage.getItem('apiBooks'));
+	buildTableLine(table, 'apiBooks');
 
 	// Get Custom books from local storage
-	var allCustomBooks = JSON.parse(localStorage.getItem('customBooks'));
-	buildTableLine(table, allCustomBooks);
+	// var allCustomBooks = JSON.parse(localStorage.getItem('customBooks'));
+	buildTableLine(table, 'customBooks');
 }
 
-function buildTableLine(parentElement, arrayOfObjects) {
+function buildTableLine(parentElement, localStorageKey) {
+
+	var arrayOfObjects = JSON.parse(localStorage.getItem(localStorageKey));
 
 	for (var jsonEntryIndex in arrayOfObjects) {
 		var line = document.createElement("tr");		
@@ -93,6 +97,46 @@ function buildTableLine(parentElement, arrayOfObjects) {
 		var isbntd = document.createElement("td");
 		isbntd.appendChild(document.createTextNode(arrayOfObjects[jsonEntryIndex].ISBN));
 		line.appendChild(isbntd);
+
+		var closetd = document.createElement("td");
+		var txt = document.createTextNode("\u00D7");
+		closetd.appendChild(txt);
+		closetd.classList.add("close");
+		closetd.setAttribute('data-index', jsonEntryIndex);
+		closetd.setAttribute('data-storageKey', localStorageKey);
+	
+		line.appendChild(closetd);
+
+		console.log(localStorageKey);
+		console.log(jsonEntryIndex);
+
+		closetd.addEventListener("click", function(){
+			var index = this.getAttribute('data-index');
+			var key = this.getAttribute('data-storageKey');
+
+			console.log("Index to remove: " + index);
+			console.log("LocalStorage key: " + key);
+
+
+			// this.parentNode.remove();
+
+			var arrayOfObjects = JSON.parse(localStorage.getItem(key));
+
+			console.log(arrayOfObjects);
+			arrayOfObjects.splice(index, 1);
+			console.log(arrayOfObjects);
+
+			localStorage.setItem(key,  JSON.stringify(arrayOfObjects));
+
+    		// Refresh the entire table to avoid index issues
+    		displayTable()
+		});
+		// closetd.onclick = function() {
+		// 	this.parentNode.remove();
+
+		// 	arrayOfObjects.splice(jsonEntryIndex, 1);
+		// 	localStorage.setItem("customBooks",  JSON.stringify(existingToDos));
+		// }
 
 		parentElement.appendChild(line);
 	}
