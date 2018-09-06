@@ -58,6 +58,9 @@ function addBook() {
 		// Update the hash in LocalStorage if needed
 		existingCustomBooks[newBook.ISBN] = newBook;
 		localStorage.setItem("customBooks",  JSON.stringify(existingCustomBooks));
+		
+		//Display the message about a book being added to the list
+		showHiddenDiv(hiddenDivAdd);
 	}
 
 	// Reset of the fields
@@ -129,8 +132,23 @@ function buildTableLine(parentElement, localStorageKey) {
 			var existingHashContent = JSON.parse(localStorage.getItem(key));
 			delete existingHashContent[index];
 			localStorage.setItem(key,  JSON.stringify(existingHashContent));
+			
+			//Display the message about a book being removed from the list
+			showHiddenDiv(hiddenDivRemove);
 		});
 
 		parentElement.appendChild(line);
 	}
+}
+
+//hidden Div variables
+var hiddenDivAdd = document.getElementById("hiddenDivAdd");
+var hiddenDivRemove = document.getElementById("hiddenDivRemove");
+
+//this function shows the hidden message for 2 seconds, then hides it again
+function showHiddenDiv(hiddenDiv){
+	hiddenDiv.style.display = "";
+	setTimeout(function(){
+		hiddenDiv.style.display = "none";
+	},2000)
 }
