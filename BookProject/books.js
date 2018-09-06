@@ -1,15 +1,18 @@
-// Ini
+// Init
+var apiCounter = 0;
+var customCounter = 0;
+
 (function initialize() {
 	// Initializations
-	var emptyArray = [];
+	let emptyHash = {};
 
 	// Initialize local storage
 	if (localStorage.getItem("customBooks") === null) {
-		localStorage.setItem("customBooks", JSON.stringify(emptyArray));
+		localStorage.setItem("customBooks", JSON.stringify(emptyHash));
 	}
 
 	if (localStorage.getItem("apiBooks") === null) {
-		localStorage.setItem("apiBooks", JSON.stringify(emptyArray));
+		localStorage.setItem("apiBooks", JSON.stringify(emptyHash));
 	}
 
 	getBooksFromApi(displayTable);
@@ -22,17 +25,20 @@ function getBooksFromApi(callbackFunction) {
 
 	xhttp.onload = function() {
 	    if (this.readyState == 4 && this.status == 200) {
-	    	var parsedResponse = JSON.parse(this.responseText);
-	    	
-	    	if (JSON.parse(localStorage.getItem('apiBooks')).length == 0) {
-    			localStorage.setItem("apiBooks",  JSON.stringify(parsedResponse)); 
-	    	}
+	    	let parsedResponse = JSON.parse(this.responseText);
+	    	let apiBooksHash = JSON.parse(localStorage.getItem('apiBooks'));
 
+	    	if (Object.keys(apiBooksHash).length == 0) {
+	    		for (let index in parsedResponse) {
+	    			if (!(parsedResponse[index].ISBN in apiBooksHash)) {
+						apiBooksHash[parsedResponse[index].ISBN] = parsedResponse[index];
+					}
+				}
+    			localStorage.setItem("apiBooks",  JSON.stringify(apiBooksHash)); 
+	    	}
     		callbackFunction();   	
 	    }
-	};
-
-	
+	};	
 
 	xhttp.send();
 }
@@ -50,12 +56,14 @@ function addBook() {
 		// Build the new book
 		var newBook = { "titre" : titleValue, "auteur" : authorValue, "ISBN": isbnValue};
 
-		// Update the list in memory if needed
-		existingCustomBooks.push(newBook);
-		localStorage.setItem("customBooks",  JSON.stringify(existingCustomBooks));
-		
-		//Display the message about a book being added to the list
-		showHiddenDiv(hiddenDivAdd);
+		// Update the hash in LocalStorage if needed
+		if (!(newBook.ISBN in existingCustomBooks)) {
+			existingCustomBooks[newBook.ISBN] = newBook;
+			localStorage.setItem("customBooks",  JSON.stringify(existingCustomBooks));
+
+			//Display the message about a book being added to the list
+			showHiddenDiv(hiddenDivAdd);
+		}
 	}
 
 	// Reset of the fields
@@ -86,21 +94,21 @@ function displayTable() {
 function buildTableLine(parentElement, localStorageKey) {
 	console.log("Filling the table with data from the following LocalStorage key: " + localStorageKey);
 
-	var arrayOfObjects = JSON.parse(localStorage.getItem(localStorageKey));
+	var hashOfObjects = JSON.parse(localStorage.getItem(localStorageKey));
 
-	for (var jsonEntryIndex in arrayOfObjects) {
+	for (var jsonEntryIndex in hashOfObjects) {
 		var line = document.createElement("tr");		
 
 		var titretd = document.createElement("td");
-		titretd.appendChild(document.createTextNode(arrayOfObjects[jsonEntryIndex].titre));
+		titretd.appendChild(document.createTextNode(hashOfObjects[jsonEntryIndex].titre));
 		line.appendChild(titretd);
 
 		var auteurtd = document.createElement("td");
-		auteurtd.appendChild(document.createTextNode(arrayOfObjects[jsonEntryIndex].auteur));
+		auteurtd.appendChild(document.createTextNode(hashOfObjects[jsonEntryIndex].auteur));
 		line.appendChild(auteurtd);
 
 		var isbntd = document.createElement("td");
-		isbntd.appendChild(document.createTextNode(arrayOfObjects[jsonEntryIndex].ISBN));
+		isbntd.appendChild(document.createTextNode(hashOfObjects[jsonEntryIndex].ISBN));
 		line.appendChild(isbntd);
 
 		var closetd = document.createElement("td");
@@ -117,21 +125,19 @@ function buildTableLine(parentElement, localStorageKey) {
 			var index = this.getAttribute('data-index');
 			var key = this.getAttribute('data-storageKey');
 
+			// Remove the element from the displayed table
+			this.parentNode.remove();
+
 			console.log("Index to remove: " + index);
 			console.log("LocalStorage key: " + key);
 
-			// Remove the element and update the array in the local storage
-			var arrayOfObjects = JSON.parse(localStorage.getItem(key));
-
-			arrayOfObjects.splice(index, 1);
-
-			localStorage.setItem(key,  JSON.stringify(arrayOfObjects));
+			// Remove the element of the hash and update the local storage
+			var existingHashContent = JSON.parse(localStorage.getItem(key));
+			delete existingHashContent[index];
+			localStorage.setItem(key,  JSON.stringify(existingHashContent));
 			
 			//Display the message about a book being removed from the list
 			showHiddenDiv(hiddenDivRemove);
-
-    		// Refresh the entire table to avoid index issues
-    		displayTable()
 		});
 
 		parentElement.appendChild(line);
