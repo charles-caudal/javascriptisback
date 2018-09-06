@@ -39,25 +39,10 @@ th {
 	font-size: 16px;
 }
 
-#hiddenMessageAdd {
+#notificationArea {
 	color: #FC861D;
 	font-weight: bold;
 	font-size: 40px;
-}
-
-#hiddenMessageRemove {
-	color: #FC861D;
-	font-weight: bold;
-	font-size: 40px;
-}
-
-#hiddenDivAdd {
-	background-color:#3f51b5;
-	margin: auto;
-	max-width: 60%;
-}
-
-#hiddenDivRemove {
 	background-color:#3f51b5;
 	margin: auto;
 	max-width: 60%;
