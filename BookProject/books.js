@@ -30,8 +30,9 @@ function getBooksFromApi(callbackFunction) {
 
 	    	if (Object.keys(apiBooksHash).length == 0) {
 	    		for (let index in parsedResponse) {
-					console.log(parsedResponse[index]);
-					apiBooksHash[parsedResponse[index].ISBN] = parsedResponse[index];
+	    			if (!(parsedResponse[index].ISBN in apiBooksHash)) {
+						apiBooksHash[parsedResponse[index].ISBN] = parsedResponse[index];
+					}
 				}
     			localStorage.setItem("apiBooks",  JSON.stringify(apiBooksHash)); 
 	    	}
@@ -56,11 +57,13 @@ function addBook() {
 		var newBook = { "titre" : titleValue, "auteur" : authorValue, "ISBN": isbnValue};
 
 		// Update the hash in LocalStorage if needed
-		existingCustomBooks[newBook.ISBN] = newBook;
-		localStorage.setItem("customBooks",  JSON.stringify(existingCustomBooks));
-		
-		//Display the message about a book being added to the list
-		showHiddenDiv(hiddenDivAdd);
+		if (!(newBook.ISBN in existingCustomBooks)) {
+			existingCustomBooks[newBook.ISBN] = newBook;
+			localStorage.setItem("customBooks",  JSON.stringify(existingCustomBooks));
+
+			//Display the message about a book being added to the list
+			showHiddenDiv(hiddenDivAdd);
+		}
 	}
 
 	// Reset of the fields
