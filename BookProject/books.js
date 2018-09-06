@@ -53,6 +53,9 @@ function addBook() {
 		// Update the list in memory if needed
 		existingCustomBooks.push(newBook);
 		localStorage.setItem("customBooks",  JSON.stringify(existingCustomBooks));
+		
+		//Display the message about a book being added to the list
+		showHiddenDiv(hiddenDivAdd);
 	}
 
 	// Reset of the fields
@@ -123,6 +126,9 @@ function buildTableLine(parentElement, localStorageKey) {
 			arrayOfObjects.splice(index, 1);
 
 			localStorage.setItem(key,  JSON.stringify(arrayOfObjects));
+			
+			//Display the message about a book being removed from the list
+			showHiddenDiv(hiddenDivRemove);
 
     		// Refresh the entire table to avoid index issues
     		displayTable()
@@ -130,4 +136,16 @@ function buildTableLine(parentElement, localStorageKey) {
 
 		parentElement.appendChild(line);
 	}
+}
+
+//hidden Div variables
+var hiddenDivAdd = document.getElementById("hiddenDivAdd");
+var hiddenDivRemove = document.getElementById("hiddenDivRemove");
+
+//this function shows the hidden message for 2 seconds, then hides it again
+function showHiddenDiv(hiddenDiv){
+	hiddenDiv.style.display = "";
+	setTimeout(function(){
+		hiddenDiv.style.display = "none";
+	},2000)
 }
