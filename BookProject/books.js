@@ -55,7 +55,9 @@ function addBook() {
 			localStorage.setItem("allBooks",  JSON.stringify(existingBooks));
 
 			//Display the message about a book being added to the list
-			showHiddenDiv(hiddenDivAdd);
+			displayNotification("The following book has been added in the database: " + newBook.titre + " (ISBN: " + newBook.ISBN + ")", hideNotificationAfter4s);
+		} else {
+			displayNotification("A book with a similar ISBN value already exist in the database !", hideNotificationAfter4s);
 		}
 	}
 
@@ -121,25 +123,29 @@ function buildTableLine(parentElement, localStorageKey) {
 
 			// Remove the element of the hash and update the local storage
 			let existingHashContent = JSON.parse(localStorage.getItem(key));
+			bookToDelete = existingHashContent[index];
 			delete existingHashContent[index];
 			localStorage.setItem(key,  JSON.stringify(existingHashContent));
 			
 			//Display the message about a book being removed from the list
-			showHiddenDiv(hiddenDivRemove);
+			displayNotification("The following book has been removed from the database: " + bookToDelete.titre + " (ISBN: " + bookToDelete.ISBN + ")", hideNotificationAfter4s);
 		});
 
 		parentElement.appendChild(line);
 	}
 }
 
-//hidden Div variables
-var hiddenDivAdd = document.getElementById("hiddenDivAdd");
-var hiddenDivRemove = document.getElementById("hiddenDivRemove");
+function displayNotification (notif, callbackFunction) {
+	let notificationArea = document.getElementById("notificationArea");
+	notificationArea.innerHTML = notif;
+	notificationArea.style.display = "";
+	callbackFunction();
+}
 
-//this function shows the hidden message for 2 seconds, then hides it again
-function showHiddenDiv(hiddenDiv){
-	hiddenDiv.style.display = "";
+function hideNotificationAfter4s() {
 	setTimeout(function(){
-		hiddenDiv.style.display = "none";
-	},2000)
+		let notificationArea = document.getElementById("notificationArea");
+		notificationArea.innerHTML = "";
+		notificationArea.style.display = "none";
+	}, 4000);
 }
