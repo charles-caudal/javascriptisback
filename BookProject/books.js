@@ -12,11 +12,10 @@
 		localStorage.setItem("apiBooks", JSON.stringify(emptyArray));
 	}
 
-	// Initial Display
-	// displayTable(JSON.parse(localStorage.getItem("customBooks")));
+	getBooksFromApi(displayTable);
 })();
 
-(function autoLoadBooksFromApi() {
+function getBooksFromApi(callbackFunction) {
 	var xhttp = new XMLHttpRequest();
 
 	xhttp.open("GET", "https://api.scorelooker.com/books", true);
@@ -24,17 +23,19 @@
 	xhttp.onload = function() {
 	    if (this.readyState == 4 && this.status == 200) {
 	    	var parsedResponse = JSON.parse(this.responseText);
-
-	    	if (localStorage.getItem("apiBooks").length === 0) {
-	    		localStorage.setItem("apiBooks",  JSON.stringify(parsedResponse));
+	    	
+	    	if (JSON.parse(localStorage.getItem('apiBooks')).length == 0) {
+    			localStorage.setItem("apiBooks",  JSON.stringify(parsedResponse)); 
 	    	}
 
-	    	displayTable();
+    		callbackFunction();   	
 	    }
 	};
 
+	
+
 	xhttp.send();
-})();
+}
 
 function addBook() {
 	// Get existing books from local storage
@@ -80,6 +81,7 @@ function displayTable() {
 }
 
 function buildTableLine(parentElement, localStorageKey) {
+	console.log("Filling the table with data from the following LocalStorage key: " + localStorageKey);
 
 	var arrayOfObjects = JSON.parse(localStorage.getItem(localStorageKey));
 
@@ -107,9 +109,7 @@ function buildTableLine(parentElement, localStorageKey) {
 	
 		line.appendChild(closetd);
 
-		console.log(localStorageKey);
-		console.log(jsonEntryIndex);
-
+		// Event listening for the 4th td
 		closetd.addEventListener("click", function(){
 			var index = this.getAttribute('data-index');
 			var key = this.getAttribute('data-storageKey');
@@ -117,26 +117,16 @@ function buildTableLine(parentElement, localStorageKey) {
 			console.log("Index to remove: " + index);
 			console.log("LocalStorage key: " + key);
 
-
-			// this.parentNode.remove();
-
+			// Remove the element and update the array in the local storage
 			var arrayOfObjects = JSON.parse(localStorage.getItem(key));
 
-			console.log(arrayOfObjects);
 			arrayOfObjects.splice(index, 1);
-			console.log(arrayOfObjects);
 
 			localStorage.setItem(key,  JSON.stringify(arrayOfObjects));
 
     		// Refresh the entire table to avoid index issues
     		displayTable()
 		});
-		// closetd.onclick = function() {
-		// 	this.parentNode.remove();
-
-		// 	arrayOfObjects.splice(jsonEntryIndex, 1);
-		// 	localStorage.setItem("customBooks",  JSON.stringify(existingToDos));
-		// }
 
 		parentElement.appendChild(line);
 	}
