@@ -137,7 +137,7 @@ function buildTableLine(parentElement, localStorageKey) {
 
 function displayNotification (notif, callbackFunction) {
 	let notificationArea = document.getElementById("notificationArea");
-	notificationArea.innerHTML = notif;
+	notificationArea.innerText = notif;
 	notificationArea.style.display = "";
 	callbackFunction();
 }
@@ -145,7 +145,7 @@ function displayNotification (notif, callbackFunction) {
 function hideNotificationAfter4s() {
 	setTimeout(function(){
 		let notificationArea = document.getElementById("notificationArea");
-		notificationArea.innerHTML = "";
+		notificationArea.innerText = "";
 		notificationArea.style.display = "none";
 	}, 4000);
 }
